@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Envelope Animation with Effects</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body{
+      margin:0;
+      padding:0;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background: radial-gradient(circle at center, #ffe0eb, #ffb6c1, #ff8da1);
+      overflow:hidden;
+      position:relative;
+      font-family:'Segoe UI',sans-serif;
+    }
+
+    /* Background hiasan */
+    .decoration {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.5), transparent);
+      animation: floatDeco 12s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    .decoration.d1 { top: 10%; left: 5%; animation-delay: 0s; }
+    .decoration.d2 { top: 70%; left: 10%; animation-delay: 3s; }
+    .decoration.d3 { top: 20%; right: 10%; animation-delay: 6s; }
+    .decoration.d4 { bottom: 10%; right: 5%; animation-delay: 9s; }
+
+    @keyframes floatDeco {
+      0% { transform: translateY(0) scale(1); opacity:0.4; }
+      50% { transform: translateY(-30px) scale(1.1); opacity:0.7; }
+      100% { transform: translateY(0) scale(1); opacity:0.4; }
+    }
+
+    /* Amplop */
+    .envelope-wrap{position:relative;display:grid;place-items:center;z-index:3;}
+    .envelope{position:relative;width:320px;height:200px;background:linear-gradient(145deg,#fff,#ffd6ea);border:2px solid #ff9fc7;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.2);cursor:pointer;overflow:hidden;}
+    .flap{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,50% 60%);background:#ff9fc7;transform-origin:top;transition:transform .8s ease;}
+    .flap.open{transform:rotateX(180deg);}
+
+    /* Surat */
+    .letter{position:absolute;left:50%;top:60%;transform:translate(-50%,-50%) scale(0);width:260px;height:180px;background:#fff;border:1px solid #ff9fc7;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.2);padding:16px;transition:transform 1s ease, top 1s ease;z-index:20;overflow:auto;text-align:center;font-family:'Dancing Script',cursive;font-size:22px;color:#9c1d5f;}
+    .letter.show{transform:translate(-50%,-50%) scale(1) rotate(0deg);top:40%;animation:wiggle 1s ease-in-out;}
+
+    @keyframes wiggle {
+      0% { transform:translate(-50%,-50%) scale(1) rotate(0deg); }
+      25% { transform:translate(-50%,-50%) scale(1) rotate(-3deg); }
+      50% { transform:translate(-50%,-50%) scale(1) rotate(3deg); }
+      75% { transform:translate(-50%,-50%) scale(1) rotate(-2deg); }
+      100% { transform:translate(-50%,-50%) scale(1) rotate(0deg); }
+    }
+
+    .letter-header{font-weight:700;font-size:1.2rem;color:#d81b60;margin-bottom:8px}
+    .letter-body{font-size:1rem;color:#333;line-height:1.4;font-family:'Segoe UI',sans-serif;}
+
+    /* Love and Lily decorations */
+    .heart {
+      position: absolute;
+      color: deeppink;
+      animation: moveHeart 6s ease-in-out infinite alternate;
+      opacity: 0.8;
+      text-shadow: 0 0 10px rgba(255, 105, 180, 0.8);
+      z-index: 1;
+    }
+
+    @keyframes moveHeart {
+      from { transform: translate(0,0); }
+      to { transform: translate(60px, 40px); }
+    }
+
+    .lily {
+      position: absolute;
+      font-size: 30px;
+      animation: floatLily 8s ease-in-out infinite;
+      opacity: 0.7;
+      z-index: 1;
+      filter: drop-shadow(0 0 6px rgba(255, 192, 203, 0.6));
+    }
+
+    @keyframes floatLily {
+      0% { transform: translate(0,0) scale(1) rotate(0deg); }
+      25% { transform: translate(50px, -40px) scale(1.2) rotate(90deg); }
+      50% { transform: translate(-30px, 60px) scale(1.1) rotate(180deg); }
+      75% { transform: translate(-60px, -30px) scale(1.3) rotate(270deg); }
+      100% { transform: translate(0,0) scale(1) rotate(360deg); }
+    }
+
+    /* Next Button */
+    #nextPageBtn {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      background: linear-gradient(135deg, deeppink, hotpink);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 20, 147, 0.9), 0 0 35px rgba(255, 20, 147, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      z-index: 5;
+    }
+
+    #nextPageBtn:hover {
+      transform: translateX(-50%) scale(1.2);
+      box-shadow: 0 0 30px rgba(255, 20, 147, 1), 0 0 50px rgba(255, 20, 147, 0.8);
+    }
+
+    #nextPageBtn::before {
+      content: '❤';
+      position: absolute;
+      font-size: 28px;
+      top: -25px;
+      color: hotpink;
+      text-shadow: 0 0 10px rgba(255, 20, 147, 0.9);
+    }
+  
+    /* ==========================
+       Page decorations (CSS-only)
+       ========================== */
+    /* Sparkle bokeh dots (no DOM change) */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0; /* di belakang semua dekorasi lain */
+      width:3px; height:3px; /* titik dasar */
+      background:rgba(255,255,255,.85);
+      border-radius:50%;
+      /* banyak titik memakai box-shadow */
+      box-shadow:
+        5vw 10vh 0 0 rgba(255,255,255,.7),
+        20vw 18vh 0 0 rgba(255,255,255,.5),
+        35vw 8vh 0 0 rgba(255,255,255,.6),
+        50vw 16vh 0 0 rgba(255,255,255,.65),
+        65vw 12vh 0 0 rgba(255,255,255,.55),
+        80vw 20vh 0 0 rgba(255,255,255,.7),
+        10vw 70vh 0 0 rgba(255,255,255,.6),
+        28vw 78vh 0 0 rgba(255,255,255,.5),
+        46vw 72vh 0 0 rgba(255,255,255,.65),
+        62vw 75vh 0 0 rgba(255,255,255,.55),
+        82vw 68vh 0 0 rgba(255,255,255,.7),
+        15vw 40vh 0 0 rgba(255,255,255,.6),
+        30vw 46vh 0 0 rgba(255,255,255,.55),
+        48vw 38vh 0 0 rgba(255,255,255,.65),
+        70vw 45vh 0 0 rgba(255,255,255,.6),
+        88vw 36vh 0 0 rgba(255,255,255,.65);
+      animation:sparkle 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes sparkle{
+      0%{ opacity:.35; transform:translateY(0); filter:blur(0px);}
+      50%{ opacity:.7;  transform:translateY(-6px); filter:blur(.2px);} 
+      100%{opacity:.45; transform:translateY(6px); filter:blur(.4px);} 
+    }
+
+    /* Vignette + subtle diagonal sheen */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:2; /* di atas background, di bawah konten utama berkat transparansi */
+      background:
+        linear-gradient(115deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 35%, rgba(255,255,255,.08) 70%, rgba(255,255,255,0) 100%),
+        radial-gradient(1200px 800px at 50% 120%, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
+        radial-gradient(1200px 800px at 50% -20%, rgba(0,0,0,.10), rgba(0,0,0,0) 60%);
+    }
+
+    /* Sudut ornamen lembut (pita) tanpa elemen tambahan */
+    html::before, html::after{
+      content:""; position:fixed; width:28vmin; height:28vmin; pointer-events:none; z-index:1; opacity:.18;
+      background:conic-gradient(from 0deg, #ffb3d1, #ffd1e3, #ffc6de, #ffb3d1);
+      filter:blur(6px);
+      border-radius:50%;
+    }
+    html::before{ left:-8vmin; top:-8vmin; }
+    html::after{ right:-8vmin; bottom:-8vmin; }
+
+</style>
+</head>
+<body>
+  <!-- Hiasan background -->
+  <div class="decoration d1"></div>
+  <div class="decoration d2"></div>
+  <div class="decoration d3"></div>
+  <div class="decoration d4"></div>
+
+  <!-- Amplop -->
+  <div class="envelope-wrap" id="envelopeWrap">
+    <div class="envelope" id="envelope">
+      <div class="flap" id="flap"></div>
+    </div>
+  </div>
+
+  <!-- Surat -->
+  <div class="letter" id="letter">
+    <div class="letter-header">Happy Birthday Anggun 🎉</div>
+    <div class="letter-body">
+      <p>Happy 15 tahunn, be happy Anggun 💖</p>
+      <p>Semoga jadi lebih baik di tahun ini, semoga makin cantikk hehehe ✨</p>
+      <p>Sama jangan lupa senyumm manis nyaa 😊</p>
+    </div>
+  </div>
+
+  <button id="nextPageBtn" onclick="window.location.href='happygun2.html'">Next</button>
+
+  <script>
+    const envelope=document.getElementById('envelope');
+    const flap=document.getElementById('flap');
+    const letter=document.getElementById('letter');
+    const envelopeWrap=document.getElementById('envelopeWrap');
+
+    envelope.addEventListener('click',()=>{
+      flap.classList.add('open');
+      setTimeout(()=>{
+        letter.classList.add('show');
+        setTimeout(()=>{
+          envelopeWrap.style.display='none';
+        },1500);
+      },800);
+    });
+
+    // Taburan bunga
+    const lilyCount = 80;
+    for (let i = 0; i < lilyCount; i++) {
+      const lily = document.createElement('div');
+      lily.className = 'lily';
+      const flowers = ['🌺','🌸','💮','🌷','🌼'];
+      lily.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+
+      lily.style.left = `${Math.random() * window.innerWidth}px`;
+      lily.style.top = `${Math.random() * window.innerHeight}px`;
+      lily.style.fontSize = `${15 + Math.random() * 30}px`;
+      lily.style.animationDuration = `${6 + Math.random() * 4}s`;
+      lily.style.animationDelay = `${Math.random() * 4}s`;
+
+      document.body.appendChild(lily);
+    }
+
+    // Taburan hati
+    const heartCount = 30;
+    for (let i = 0; i < heartCount; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = '❤';
+
+      heart.style.left = `${Math.random() * window.innerWidth}px`;
+      heart.style.top = `${Math.random() * window.innerHeight}px`;
+      heart.style.fontSize = `${20 + Math.random() * 40}px`;
+      heart.style.animationDuration = `${4 + Math.random() * 5}s`;
+      heart.style.animationDelay = `${Math.random() * 3}s`;
+
+      document.body.appendChild(heart);
+    }
+  </script>
+</body>
+</html>
